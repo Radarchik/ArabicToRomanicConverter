@@ -1,5 +1,7 @@
 
-package romanic;
+package observer.converter;
+import java.util.Observable;
+import java.util.Observer;
 
 /**
  * Created by tszin on 12/06/2017.
@@ -21,18 +23,22 @@ X placed before L or C indicates ten less, so forty is XL (ten less than fifty) 
 C placed before D or M indicates a hundred less, so four hundred is CD (a hundred less than five hundred)
 and nine hundred is CM (a hundred less than a thousand)[5]\
 * */
-public class Romanic {
+public class ConverterToRomanNumerals implements Observer {
 //number for transfer into Roman numeral
-    static int givenNumber;
+    private static int givenNumber;
 
 // counters for thousands, hundreds, dozens and remainder of givenNumber
-    static  int numberOfThousands = 0;
-    static  int numberOfHundreds = 0;
-    static  int numberOfDozens = 0;
-    static  int remainderInTen = 0;
+    private static  int numberOfThousands;
+    private static  int numberOfHundreds;
+    private static  int numberOfDozens;
+    private static  int remainderInTen;
 
-    /* */
+    public ConverterToRomanNumerals() {
+    }
+
+        /* */
     public static void countThousands() {
+        numberOfThousands=0; //as it is static field, setting to "0" previous result
          while (givenNumber >=1000){
             givenNumber = givenNumber-1000;
              numberOfThousands++;
@@ -40,6 +46,7 @@ public class Romanic {
        }
 
     public static void countHundreds (){
+        numberOfHundreds=0;
         while (givenNumber >=100){
             givenNumber = givenNumber-100;
             numberOfHundreds++;
@@ -47,60 +54,70 @@ public class Romanic {
     }
 
     public static void countDozens (){
+        numberOfDozens=0;
         while (givenNumber >=10){
             givenNumber = givenNumber-10;
             numberOfDozens++;
-        }
+        }        
+    }
+
+    public static void countRemainderInTen(){
         remainderInTen=givenNumber;
     }
 
 
-
-    public static void converterFromArabicToRomanNumeral(int x) {
+    public static String converterFromArabicToRomanNumeral(int x) {
 
         // initializing fields for input Number
         givenNumber = x;
+        
+        // counting thousands, hundreds, dozens and remainder of givenNumber
         countThousands();
         countHundreds();
         countDozens();
+        countRemainderInTen();
 
         //for checking
-       // System.out.println(numberOfThousands + " " + numberOfHundreds + " " + numberOfDozens + " " + remainderInTen);
+      System.out.println(numberOfThousands + " " + numberOfHundreds + " " + numberOfDozens + " " + remainderInTen);
 
+       String result ="";
         //printing thousands (classic Roman numerals allow max 3 thousands !!!)
-        System.out.print(symbols_n_times("M", numberOfThousands));
+        result+=symbols_n_times("M", numberOfThousands);
 
         //printing hundreds
         if (numberOfHundreds > 0 && numberOfHundreds <= 3)
-            System.out.print(symbols_n_times("C", numberOfHundreds));
+            result+=symbols_n_times("C", numberOfHundreds);
         else if (numberOfHundreds == 4)
-            System.out.print("CD");
+            result+="CD";
         else if (numberOfHundreds >= 5 && numberOfHundreds <= 8)
-            System.out.print("D" + (symbols_n_times("C", numberOfHundreds - 5)));
+            result+=("D" + (symbols_n_times("C", numberOfHundreds - 5)));
         else if (numberOfHundreds == 9)
-            System.out.print("CM");
+            result+="CM";
 
 
         //printing dozens
         if (numberOfDozens > 0 && numberOfDozens <= 3)
-            System.out.print(symbols_n_times("X", numberOfDozens));
+            result+=symbols_n_times("X", numberOfDozens);
         else if (numberOfDozens == 4)
-            System.out.print("XL");
+            result+="XL";
         else if (numberOfDozens >= 5 && numberOfDozens <= 8)
-            System.out.print("L" + (symbols_n_times("X", numberOfDozens - 5)));
+            result+=("L" + (symbols_n_times("X", numberOfDozens - 5)));
         else if (numberOfDozens == 9)
-            System.out.print("XC");
+            result+="XC";
 
 
         //printing remainder
         if (remainderInTen > 0 && remainderInTen <= 3)
-            System.out.print(symbols_n_times("I", remainderInTen));
+            result+=symbols_n_times("I", remainderInTen);
         else if (remainderInTen == 4)
-            System.out.print("IV");
+            result+="IV";
         else if (remainderInTen >= 5 && remainderInTen <= 8)
-            System.out.print("V" + (symbols_n_times("I", remainderInTen - 5)));
+            result+="V" + (symbols_n_times("I", remainderInTen - 5));
         else if (remainderInTen == 9)
-            System.out.print("IX");
+            result+="IX";
+        
+        
+        return result;
 
     }
             // method just return x symbol  n times for reducing too much code in if-else statements
@@ -113,10 +130,17 @@ public class Romanic {
         }
 
 
-    public static void main(String[] args) {
-
-        converterFromArabicToRomanNumeral(707);
-
+    @Override
+    public void update(Observable o, Object arg) {
+        
+         Message msg = (Message) arg;
+        if(msg.getAction().equals(UIMessages.CONVERT))
+        {
+            String result = converterFromArabicToRomanNumeral(Integer.parseInt(msg.getArabicNumeral()));
+            msg.setResponse(result);
+            /* Now we need to send this result back to the object that originally
+            sent the message. */
         }
+    }
 
 }
