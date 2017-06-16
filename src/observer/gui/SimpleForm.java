@@ -11,40 +11,36 @@ import java.util.logging.Logger;
  *
  * @author tszin
  */
-public class SimpleForm extends javax.swing.JFrame
-{
+public class SimpleForm extends javax.swing.JFrame {
+
     private MyObservable observable;
-    
-    private class MyObservable extends Observable
-    {
+
+    private class MyObservable extends Observable {
+
         @Override
-        public void notifyObservers(Object arg)
-        {
+        public void notifyObservers(Object arg) {
             setChanged();   //If the observable hasn't changed the notification will not happen
-            super.notifyObservers(arg); 
+            super.notifyObservers(arg);
         }
     }
+
     /**
      * Creates new form SimpleForm
      */
-    public SimpleForm()
-    {
+    public SimpleForm() {
         observable = new MyObservable();
         initComponents();
     }
 
-    public synchronized void addObserver(Observer o)
-    {
+    public synchronized void addObserver(Observer o) {
         observable.addObserver(o);
     }
 
-    public synchronized void deleteObserver(Observer o)
-    {
+    public synchronized void deleteObserver(Observer o) {
         observable.deleteObserver(o);
     }
 
-    private void notifyObservers(Object arg)
-    {
+    private void notifyObservers(Object arg) {
         observable.notifyObservers(arg);
     }
 
@@ -64,6 +60,7 @@ public class SimpleForm extends javax.swing.JFrame
         jLabel3 = new javax.swing.JLabel();
         txtResult = new javax.swing.JTextField();
         btnSend = new javax.swing.JButton();
+        jLabel4 = new javax.swing.JLabel();
 
         setDefaultCloseOperation(javax.swing.WindowConstants.EXIT_ON_CLOSE);
         setTitle("Arabic-Roman converter");
@@ -81,6 +78,8 @@ public class SimpleForm extends javax.swing.JFrame
             }
         });
 
+        jLabel4.setText("Created by Tarasz Szinyovics");
+
         javax.swing.GroupLayout layout = new javax.swing.GroupLayout(getContentPane());
         getContentPane().setLayout(layout);
         layout.setHorizontalGroup(
@@ -90,16 +89,12 @@ public class SimpleForm extends javax.swing.JFrame
                 .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                     .addComponent(txtField1)
                     .addComponent(txtField2)
-                    .addGroup(layout.createSequentialGroup()
-                        .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                            .addComponent(jLabel1)
-                            .addComponent(jLabel2))
-                        .addGap(0, 0, Short.MAX_VALUE))
                     .addComponent(txtResult)
-                    .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, layout.createSequentialGroup()
-                        .addGap(0, 268, Short.MAX_VALUE)
-                        .addComponent(btnSend))
-                    .addComponent(jLabel3, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
+                    .addComponent(jLabel3, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                    .addComponent(btnSend, javax.swing.GroupLayout.Alignment.TRAILING)
+                    .addComponent(jLabel1)
+                    .addComponent(jLabel2)
+                    .addComponent(jLabel4, javax.swing.GroupLayout.DEFAULT_SIZE, 339, Short.MAX_VALUE))
                 .addContainerGap())
         );
         layout.setVerticalGroup(
@@ -119,7 +114,9 @@ public class SimpleForm extends javax.swing.JFrame
                 .addComponent(jLabel3)
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                 .addComponent(txtResult, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, 35, Short.MAX_VALUE)
+                .addComponent(jLabel4)
+                .addContainerGap())
         );
 
         pack();
@@ -129,27 +126,48 @@ public class SimpleForm extends javax.swing.JFrame
     {//GEN-HEADEREND:event_btnSendActionPerformed
         String txt1 = txtField1.getText().trim();
         String txt2 = txtField2.getText().trim();
-        
-       if (!txt1.isEmpty()&&!txt2.isEmpty()){
+        txtField1.setText("");
+        txtField2.setText("");
+
+        if (!txt1.isEmpty() && !txt2.isEmpty()) {
             String mes = "Input numeral into one field only!";
             JOptionPane.showMessageDialog(null, mes);
+            txtResult.setText("");
+        } else if (!txt1.isEmpty()) {
+            try {
+                if (Integer.parseInt(txt1) > 3999 || Integer.parseInt(txt1) < 1) {
+                    String mes = "Input right number (1 - 3999)";
+                    JOptionPane.showMessageDialog(null, mes);
+                    txtResult.setText("");
+                    return;
+                }
+                Message msg = new Message(UIMessages.CONVERT, txt1, txt2);
+                notifyObservers(msg);
+                txtResult.setText(msg.getResponse());
+            } catch (NumberFormatException e) {
+                String mes = "Input right number (1 - 3999)";
+                JOptionPane.showMessageDialog(null, mes);
+                txtResult.setText("");
             }
-       else if(!txt1.isEmpty()) { 
-            if (Integer.parseInt(txt1)>3999){
-            String mes = "The number must be less than 4000";
-            JOptionPane.showMessageDialog(null, mes);
-            return;
+
+        } else if (!txt2.isEmpty()) {
+            //checking whether input number contain more than 3 ordered repeating symbols
+            if (txt2.matches("(.)\\1{3,}")) {
+                String mes = "Wrong number";
+                JOptionPane.showMessageDialog(null, mes);
+                txtResult.setText("");
+                return;
             }
-            
-            
+
             Message msg = new Message(UIMessages.CONVERT, txt1, txt2);
             notifyObservers(msg);
-            txtResult.setText(msg.getResponse());
-        } else if(!txt2.isEmpty())
-        {
-            Message msg = new Message(UIMessages.CONVERT, txt1, txt2);
-            notifyObservers(msg);
-            txtResult.setText(msg.getResponse());
+            String resp = msg.getResponse();
+            if (resp.equals("Wrong number")) {
+                JOptionPane.showMessageDialog(null, resp);
+                txtResult.setText("");
+            } else {
+                txtResult.setText(msg.getResponse());
+            }
         }
     }//GEN-LAST:event_btnSendActionPerformed
 
@@ -158,6 +176,7 @@ public class SimpleForm extends javax.swing.JFrame
     private javax.swing.JLabel jLabel1;
     private javax.swing.JLabel jLabel2;
     private javax.swing.JLabel jLabel3;
+    private javax.swing.JLabel jLabel4;
     private javax.swing.JTextField txtField1;
     private javax.swing.JTextField txtField2;
     private javax.swing.JTextField txtResult;

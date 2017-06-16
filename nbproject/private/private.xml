@@ -4,8 +4,9 @@
     <open-files xmlns="http://www.netbeans.org/ns/projectui-open-files/2">
         <group>
             <file>file:/F:/MyProjects/Romanic/src/observer/controller/Controller.java</file>
-            <file>file:/F:/MyProjects/Romanic/src/observer/converterToRomanNumerals/Message.java</file>
-            <file>file:/F:/MyProjects/Romanic/src/observer/converterToRomanNumerals/ConverterToRomanNumerals.java</file>
+            <file>file:/F:/MyProjects/Romanic/src/observer/converter/ConverterToArabicNumerals.java</file>
+            <file>file:/F:/MyProjects/Romanic/src/observer/converter/Message.java</file>
+            <file>file:/F:/MyProjects/Romanic/src/observer/converter/ConverterToRomanNumerals.java</file>
             <file>file:/F:/MyProjects/Romanic/src/observer/gui/SimpleForm.java</file>
         </group>
     </open-files>

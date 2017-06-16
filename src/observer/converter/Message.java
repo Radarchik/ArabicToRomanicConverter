@@ -4,8 +4,8 @@ package observer.converter;
  *
  * @author Tarasz Szinyovics
  */
-public class Message
-{
+public class Message {
+
     private String arabicNumeral;
     private String romanNumeral;
     private String action;
@@ -17,7 +17,6 @@ public class Message
         this.romanNumeral = romanNumeral;
     }
 
-         
     public String getArabicNumeral() {
         return arabicNumeral;
     }
@@ -25,23 +24,19 @@ public class Message
     public String getRomanNumeral() {
         return romanNumeral;
     }
-    
 
     /**
      * @return the action
      */
-    public String getAction()
-    {
+    public String getAction() {
         return action;
     }
-    
-    public void setResponse(String response)
-    {
+
+    public void setResponse(String response) {
         this.response = response;
     }
-    
-    public String getResponse()
-    {
+
+    public String getResponse() {
         return response;
     }
 }

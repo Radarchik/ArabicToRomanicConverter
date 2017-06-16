@@ -14,15 +14,16 @@ import observer.gui.SimpleForm;
 public class Controller
 {
     private SimpleForm ui;
-   // private ConverterToRomanNumerals generator;
-    private ConverterToArabicNumerals generator;
+    private ConverterToRomanNumerals generator1;
+    private ConverterToArabicNumerals generator2;
     
     public Controller()
     {
         ui = new SimpleForm();
-        //generator = new ConverterToRomanNumerals();
-        generator = new ConverterToArabicNumerals();
-        ui.addObserver(generator);
+        generator1 = new ConverterToRomanNumerals();
+        generator2 = new ConverterToArabicNumerals();
+        ui.addObserver(generator1);
+        ui.addObserver(generator2);
         ui.setVisible(true);
     }
     
